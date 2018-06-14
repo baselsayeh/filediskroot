@@ -1,0 +1,53 @@
+#!/usr/bin/ash
+
+run_hook() {
+	err_wait_return() {
+		err "$@"
+		sleep 5
+		exit 1
+	}
+
+	blockmountpath="/filediskrootmnt"
+
+	if [ -z "$filediskrootblock" ] || [ -z "$filediskrootpath" ]; then
+		#err_wait_return "filediskrootblock or filediskrootpath kernel parameters is not found or empty!"
+		echo "filediskrootblock or filediskrootpath kernel parameters is not found or empty!"
+		return 0
+	fi
+
+	if [ ! -f "$filediskrootblock" ]; then
+		#err_wait_return "$filediskrootblock does not exist!"
+		echo "$filediskrootblock does not exist!"
+	fi
+
+
+	mkdir "$blockmountpath"
+	if [ ! -d "$blockmountpath" ]; then
+		err_wait_return "failed to create $blockmountpath !"
+	fi
+
+	mount -o rw "$filediskrootblock" "$blockmountpath"
+	RESULT=$?
+	if [ $RESULT -ne 0 ]; then
+		err_wait_return "failed to mount $filediskrootblock to $blockmountpath !"
+	fi
+
+	if [ ! -f "$blockmountpath/$filediskrootpath" ]; then
+		umount "$blockmountpath"
+		err_wait_return "$blockmountpath/$filediskrootpath does not exist!"
+	fi
+
+	#file to block
+	#loopdevice=$(losetup.static --find --partscan --show 2>&1)
+
+	losetupresult=$(losetup.static --find --partscan --show "$blockmountpath/$filediskrootpath" 2>&1)
+	RESULT=$?
+	if [ $RESULT -ne 0 ]; then
+		err_wait_return "losetup failed! - the result was:$losetupresult"
+	fi
+
+	msg "sussessfully got $losetupresult!"
+
+	sleep 2
+	return 0
+}

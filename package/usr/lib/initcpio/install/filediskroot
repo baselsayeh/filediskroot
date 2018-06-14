@@ -1,0 +1,8 @@
+#!/bin/sh
+
+build() {
+	#adds the binary losetup.static
+	add_binary /usr/lib/filediskroot/losetup.static /bin/losetup.static
+
+	add_runscript
+}
