@@ -1,6 +1,8 @@
 #!/bin/sh
 
 build() {
+	add_module loop
+
 	#adds the binary losetup.static
 	add_binary /usr/lib/filediskroot/losetup.static /bin/losetup.static
 
