@@ -41,4 +41,4 @@ debug() {
 
 . /usr/lib/looproot/mount_loop_as_rootfs
 
-return 0
+return $?

@@ -1,14 +1,14 @@
 #!/bin/bash
 
-if [ "$EUID" -ne 0 ]
-	then echo "Please run as root"
-	exit
-fi
+#if [ "$EUID" -ne 0 ]
+#	then echo "Please run as root"
+#	exit
+#fi
 
 cd arch/package
 
-rm .PKGINFO
-rm ../filediskroot.pkg.tar.xz
+rm -f .PKGINFO
+rm -f ../filediskroot.pkg.tar.xz
 
 touch ".PKGINFO"
 
@@ -23,10 +23,10 @@ echo "arch = x86_64"                                              >> ".PKGINFO"
 
 #chown -R root:root * .*
 
-cp ../mount_loop_as_rootfs usr/lib/looproot/
+cp ../../mount_loop_as_rootfs usr/lib/looproot/
 chmod 755 usr/lib/looproot/mount_loop_as_rootfs
 
-fakeroot tar -cf - .PKGINFO * | xz -c -z - > ../initcpio-looproot.pkg.tar.xz
+fakeroot tar -cf - .PKGINFO * | xz -c -z - > ../../initcpio-looproot.pkg.tar.xz
 
 rm usr/lib/looproot/mount_loop_as_rootfs
 

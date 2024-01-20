@@ -24,8 +24,8 @@ Sumply run `make_package.sh` as root, then install the resulting package via `pa
  2. Mount the image
  3. chroot into the image
  4. Install the package as shown in (`Package Instalation`) section
- 5. Edit `/etc/mkinitcpio.conf` and add (`filediskroot`) inside the hooks section
- 6. To use this module, you must include `filediskrootblock=[/dev/device]` in your kernel parameters and edit [/dev/device] to point to your device, and include `filediskrootpath=[path]` in your kernel parameters and edit [path] to point to your image file (without the leading slash).
+ 5. Edit `/etc/mkinitcpio.conf` and add (`looproot`) inside the hooks section
+ 6. To use this module, you must include `looproot=/path/to/file[:partition number]` in your kernel parameters (with the leading slash).
  7. Use ``mkinitcpio -p linux`` to recreate initcpio
 
 

@@ -11,7 +11,10 @@ looppart=$(echo -ne "${looproot}" | cut -d":" -f2)
 loopfile=$(echo -ne "${looproot}" | cut -d":" -f1)
 
 #Check if the file is Actually there
-[ ! -f "${rootmnt}${loopfile}" ] && panic "Loop file is NOT found!"
+if [ ! -f "${rootmnt}${loopfile}" ]; then
+	panic "Loop file is NOT found!"
+	return 1
+fi
 
 #
 #modprobe loop
@@ -37,6 +40,7 @@ fi
 if (echo -ne "${looproot}" | grep -q ":"); then
 	#Disk image
 	panic "Trying to mount ${loopfile} with partition ${looppart}, but it is not supported yet"
+	return 1
 fi
 
 #NTFS-3g is needed for NTFS mounts
@@ -45,6 +49,7 @@ if [ $? -ne 0 ]; then
 	#Mount failed
 	mount -n -o remount,ro "${rootmnt}2"
 	panic "mounting ${loopfile} failed!"
+	return 1
 fi
 
 #Move the parent mount to /mnt on the new mounted root
