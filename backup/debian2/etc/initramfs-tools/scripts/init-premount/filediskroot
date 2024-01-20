@@ -1,0 +1,48 @@
+#!/bin/sh
+# loopmount a device
+
+PREREQ=""
+
+prereqs()
+{
+	echo "$PREREQ"
+}
+
+case $1 in
+prereqs)
+	prereqs
+	exit 0
+	;;
+esac
+
+. /scripts/functions
+# Begin real processing below this line
+
+if [ -z "${loop}" ]; then
+	#Nothing to be done
+	exit 0
+fi
+
+#make the rootmount 2 path
+[ -d ${rootmnt}2 ] || mkdir -m 0700 ${rootmnt}2
+
+#mount root
+mount -n -o nodiratime,noatime ${ROOT} ${rootmnt}2
+
+[ ! -f "${rootmnt}2${loop}" ] && panic "Loop file is NOT found!"
+
+#Try to parse whats after loop
+looppart=$(echo -ne "${loop}" | cut -d":" -f2)
+loopfile=$(echo -ne "${loop}" | cut -d":" -f1)
+if [ -z "$looppart" ]; then
+	#Partition
+	mount -n -o loop ${rootmnt}2${loopfile} ${rootmnt}
+else
+	#Disk image
+	panic "Trying to mount ${loopfile} with partition ${looppart}, but it is not supported yet"
+fi
+
+#Move the parent mount to /mnt on the new mounted root
+mount -n --move ${rootmnt}2 ${rootmnt}/mnt
+
+exit 0

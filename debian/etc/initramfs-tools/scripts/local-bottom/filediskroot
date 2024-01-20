@@ -1,0 +1,66 @@
+#!/bin/sh
+# loopmount a device
+
+PREREQ=""
+
+prereqs()
+{
+	echo "$PREREQ"
+}
+
+case $1 in
+prereqs)
+	prereqs
+	exit 0
+	;;
+esac
+
+. /scripts/functions
+# Begin real processing below this line
+
+if [ -z "${loop}" ]; then
+	#Nothing to be done
+	exit 0
+fi
+
+looppart=$(echo -ne "${loop}" | cut -d":" -f2)
+loopfile=$(echo -ne "${loop}" | cut -d":" -f1)
+
+#Check if the file is Actually there
+[ ! -f "${rootmnt}${loopfile}" ] && panic "Loop file is NOT found!"
+
+#
+#modprobe loop
+
+#make the rootmount 2 path
+[ -d "${rootmnt}2" ] || mkdir -m 0700 "${rootmnt}2"
+
+
+#move the parent mount to root mount 2 (/root2 for debian)
+mount -n --move "${rootmnt}" "${rootmnt}2"
+
+
+#Check if the parent fs is mounted as read only
+#(This can happen if the system did not shutdown correctly)
+if (cat /proc/mounts | grep "${rootmnt}2" | cut -d " " -f4 | grep -q "ro"); then
+	#Remount root2 as rw
+	#NOTE: this can result in data loss
+	log_warning_msg "Parent FS was not unmounted correctly last boot"
+	mount -n -o remount,rw "${rootmnt}2"
+fi
+
+#Try to parse whats after loop
+
+#if [ -z "$looppart" ]; then
+if (echo -ne "${loop}" | grep -q ":"); then
+	#Disk image
+	panic "Trying to mount ${loopfile} with partition ${looppart}, but it is not supported yet"
+else
+	#Partition/fs image
+	mount -n -o loop "${rootmnt}2${loopfile}" "${rootmnt}"
+fi
+
+#Move the parent mount to /mnt on the new mounted root
+mount -n --move ${rootmnt}2 ${rootmnt}/mnt
+
+exit 0

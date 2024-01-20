@@ -5,7 +5,7 @@ if [ "$EUID" -ne 0 ]
 	exit
 fi
 
-cd package
+cd arch/package
 
 rm .PKGINFO
 rm ../filediskroot.pkg.tar.xz
