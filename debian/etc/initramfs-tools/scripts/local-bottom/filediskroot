@@ -55,10 +55,14 @@ fi
 if (echo -ne "${loop}" | grep -q ":"); then
 	#Disk image
 	panic "Trying to mount ${loopfile} with partition ${looppart}, but it is not supported yet"
-else
-	#Partition/fs image
-	#NTFS-3g is needed for NTFS mounts
-	mount -n -t ext4,btrfs,vfat,exfat -o loop "${rootmnt}2${loopfile}" "${rootmnt}"
+fi
+
+#NTFS-3g is needed for NTFS mounts
+mount -n -t ext4,btrfs,vfat,exfat -o loop "${rootmnt}2${loopfile}" "${rootmnt}"
+if [ $? -ne 0 ]; then
+	#Mount failed
+	mount -n -o remount,ro "${rootmnt}2"
+	panic "mounting ${loopfile} failed!"
 fi
 
 #Move the parent mount to /mnt on the new mounted root
