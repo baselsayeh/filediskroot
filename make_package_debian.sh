@@ -14,7 +14,7 @@ mkdir DEBIAN
 #touch "DEBIAN"
 
 cat > DEBIAN/control <<EOL
-Package: filediskroot
+Package: initcpio-looproot
 Version: 1.0
 Maintainer: Basel Sayeh
 Architecture: all
@@ -23,7 +23,13 @@ EOL
 
 #chown -R root:root *
 
-fakeroot dpkg-deb --build . ../filediskroot.deb
+#Copy the mounting script
+cp ../mount_loop_as_rootfs usr/lib/looproot/
+chmod 755 usr/lib/looproot/mount_loop_as_rootfs
+
+fakeroot dpkg-deb --build . ../initcpio-looproot.deb
+
+rm usr/lib/looproot/mount_loop_as_rootfs
 
 rm -Rf DEBIAN
 

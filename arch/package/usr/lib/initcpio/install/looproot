@@ -1,0 +1,13 @@
+#!/bin/sh
+
+build() {
+	add_module loop
+
+	#adds the binary losetup.static
+	add_binary /usr/lib/looproot/losetup.static /bin/losetup.static
+
+	#Adds the script
+	add_binary /usr/lib/looproot/mount_loop_as_rootfs /usr/lib/looproot/mount_loop_as_rootfs
+
+	add_runscript
+}

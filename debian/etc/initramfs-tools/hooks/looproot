@@ -21,4 +21,6 @@ esac
 manual_add_modules loop
 #force_load
 
+copy_file "script" "/usr/lib/looproot/mount_loop_as_rootfs"
+
 exit 0

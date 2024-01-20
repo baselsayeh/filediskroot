@@ -1,0 +1,28 @@
+#!/usr/bin/ash
+
+run_latehook() {
+	info() {
+		msg "Info: $*"
+	}
+	success() {
+		msg "Success: $*"
+	}
+	warn() {
+		msg "Warning: $*"
+	}
+	#err
+	fatal() {
+		echo "Fatal: $*"
+	}
+	panic() {
+		fatal "$*"
+		sleep 2
+		return 1
+	}
+
+	rootmnt="/new_root"
+
+	. /usr/lib/looproot/mount_loop_as_rootfs
+
+	return 0
+}
