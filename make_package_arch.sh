@@ -23,12 +23,14 @@ echo "arch = x86_64"                                              >> ".PKGINFO"
 
 #chown -R root:root * .*
 
-cp ../../mount_loop_as_rootfs usr/lib/looproot/
+cp ../../files/* usr/lib/looproot/
 chmod 755 usr/lib/looproot/mount_loop_as_rootfs
+chmod 755 usr/lib/looproot/looproot_initramfs_restore
+chmod 644 usr/lib/looproot/*.gz
 
 fakeroot tar -cf - .PKGINFO * | xz -c -z - > ../../initcpio-looproot.pkg.tar.xz
 
-rm usr/lib/looproot/mount_loop_as_rootfs
+rm usr/lib/looproot/*
 
 rm .PKGINFO
 

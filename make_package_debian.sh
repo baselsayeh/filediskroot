@@ -8,30 +8,17 @@
 #cd debian/package
 cd debian
 
-rm -Rf DEBIAN
-mkdir DEBIAN
-
-#touch "DEBIAN"
-
-cat > DEBIAN/control <<EOL
-Package: initcpio-looproot
-Version: 1.0
-Maintainer: Basel Sayeh
-Architecture: all
-Description: This package allows you to use a file as the rootfs of your system
-EOL
-
 #chown -R root:root *
 
 #Copy the mounting script
-cp ../mount_loop_as_rootfs usr/lib/looproot/
+cp ../files/* usr/lib/looproot/
 chmod 755 usr/lib/looproot/mount_loop_as_rootfs
+chmod 755 usr/lib/looproot/looproot_initramfs_restore
+chmod 644 usr/lib/looproot/*.gz
 
 fakeroot dpkg-deb --build . ../initcpio-looproot.deb
 
-rm usr/lib/looproot/mount_loop_as_rootfs
-
-rm -Rf DEBIAN
+rm usr/lib/looproot/*
 
 cd ..
 

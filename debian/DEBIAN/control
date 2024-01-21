@@ -1,0 +1,5 @@
+Package: initcpio-looproot
+Version: 1.0
+Maintainer: Basel Sayeh
+Architecture: all
+Description: This package allows you to use a file as the rootfs of your system

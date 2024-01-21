@@ -1,0 +1,31 @@
+#!/bin/sh
+
+ARCH=$(arch)
+ROOTFS="/usr/lib/looproot/rootfs-$ARCH.tar.gz"
+
+grep -q "looproot=" /proc/cmdline
+if [ $? -ne 0 ]; then
+    echo "Looproot is not used, nothing to do"
+    exit 0
+fi
+
+if [ -f "/run/initramfs/.looproot" ]; then
+    echo "Looproot fs is already there!"
+    exit 0
+fi
+
+
+if [ -f "$ROOTFS" ]; then
+    mount -t tmpfs tmpfs -o size=32M,exec /run/initramfs/
+    touch "/run/initramfs/.need_shutdown"
+    touch "/run/initramfs/.looproot"
+    tar xzvf "$ROOTFS" -C "/run/initramfs/"
+
+    echo "OK"
+else
+    echo "This arch $ARCH does not support or does not have a pre-compiled rootfs for it!"
+    exit 1
+fi
+
+exit 0
+
